@@ -1,0 +1,11 @@
+[
+  {
+    "labels": {
+      "job": "cadvisor",
+      "env_type": "pro"
+    },
+    "targets": [
+      "localhost:8080"
+    ]
+  }
+]

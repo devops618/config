@@ -1,0 +1,10 @@
+modules:
+  tcp_tls:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: false
+      tls: true
+      tls_config:
+        insecure_skip_verify: true

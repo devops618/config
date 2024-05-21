@@ -1,0 +1,90 @@
+/* wechat */
+{{ range $k,$v:=.alerts }}{{if eq $v.status "resolved"}}**恢复信息**
+> <font color="info">告警类型:</font> {{$v.labels.alertname}}
+> <font color="info">告警级别:</font> {{$v.labels.severity}}
+> <font color="info">开始时间:</font> {{GetCSTtime $v.startsAt}}
+> <font color="info">恢复时间:</font> {{GetCSTtime $v.endsAt}}{{- if $v.labels.instance}}
+> <font color="info">恢复信息:</font> {{$v.labels.instance}}{{- end}}
+> <font color="info">恢复概要:</font> {{$v.annotations.summary}}{{else}}**告警信息**
+> <font color="warning">告警类型:</font> {{$v.labels.alertname}}
+> <font color="warning">告警级别:</font> {{$v.labels.severity}}
+> <font color="warning">开始时间:</font> {{GetCSTtime $v.startsAt}}{{- if $v.labels.instance}}
+> <font color="warning">故障信息:</font> {{$v.labels.instance}}{{- end}}
+> <font color="warning">故障概要:</font> {{$v.annotations.summary}}
+> <font color="warning">故障描述:</font> {{$v.annotations.description}}{{end}}{{end}}
+
+
+/* dingtalk */
+{{ range $k,$v:=.alerts }}
+{{if eq $v.status "resolved"}}
+**恢复信息**
+> <font color="#00ff00">告警类型:</font> {{$v.labels.alertname}}
+
+> <font color="#00ff00">告警级别:</font> {{$v.labels.severity}}
+
+> <font color="#00ff00">开始时间:</font> {{GetCSTtime $v.startsAt}}
+
+> <font color="#00ff00">恢复时间:</font> {{GetCSTtime $v.endsAt}}
+
+{{if gt (len $v.labels.instance) 0}}
+> <font color="#00ff00">恢复信息:</font> {{$v.labels.instance}}
+{{end}}
+
+> <font color="#00ff00">恢复概要:</font> {{$v.annotations.summary}}
+
+{{else}}
+**告警信息**
+> <font color="#ff0000">告警类型:</font> {{$v.labels.alertname}}
+
+> <font color="#ff0000">告警级别:</font> {{$v.labels.severity}}
+
+> <font color="#ff0000">开始时间:</font> {{GetCSTtime $v.startsAt}}
+
+{{if gt (len $v.labels.instance) 0}}
+> <font color="#ff0000">故障信息:</font> {{$v.labels.instance}}
+{{end}}
+
+> <font color="#ff0000">故障概要:</font> {{$v.annotations.summary}}
+
+> <font color="#ff0000">故障描述:</font> {{$v.annotations.description}}
+
+{{end}}
+{{end}}
+
+
+/* feishu */
+{{- range $k,$v:=.alerts -}}
+{{- if eq $v.status "resolved" -}}
+**Prometheus 恢复信息**
+告警内容：{{$v.labels.alertname}}
+告警级别：{{$v.labels.severity}}
+{{- if $v.labels.env_type}}
+告警环境：{{$v.labels.env_type}}
+{{- end}}
+{{- if $v.labels.container_label_MESOS_TASK_ID}}
+微服务名：{{$v.labels.container_label_MESOS_TASK_ID}}
+{{- end}}
+{{- if $v.labels.instance}}
+实例地址：{{$v.labels.instance}}
+{{- end}}
+当前数据：{{$v.annotations.summary}}
+触发时间：{{GetCSTtime $v.startsAt}}
+恢复时间：{{GetCSTtime $v.endsAt}}
+{{- else -}}
+**Prometheus 告警信息**
+告警内容：{{$v.labels.alertname}}
+告警级别：{{$v.labels.severity}}
+{{- if $v.labels.env_type}}
+告警环境：{{$v.labels.env_type}}
+{{- end}}
+{{- if $v.labels.container_label_MESOS_TASK_ID}}
+微服务名：{{$v.labels.container_label_MESOS_TASK_ID}}
+{{- end}}
+{{- if $v.labels.instance}}
+实例地址：{{$v.labels.instance}}
+{{- end}}
+当前数据：{{$v.annotations.summary}}
+告警策略：{{$v.annotations.description}}
+触发时间：{{GetCSTtime $v.startsAt}}
+{{- end}}
+{{- end}}

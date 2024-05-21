@@ -1,0 +1,29 @@
+groups:
+  - name: cadvisor
+    rules:
+      - alert: 微服务重启告警
+        expr: time() - container_last_seen{job="cadvisor", env_type="pro", container_label_MESOS_TASK_ID!=""} > 60
+        for: 5s
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $value }}'
+          description: '微服务发生重启'
+
+      - alert: 微服务CPU使用率告警
+        expr: sum by (id, instance, env_type, container_label_MESOS_TASK_ID) (rate(container_cpu_usage_seconds_total{job="cadvisor", env_type="pro", container_label_MESOS_TASK_ID!=""}[1m])) / (sum by (id, instance, env_type, container_label_MESOS_TASK_ID) (container_spec_cpu_quota{job="cadvisor", env_type="pro", container_label_MESOS_TASK_ID!=""}) / 100000) * 100 > 90
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $value }}'
+          description: 'CPU使用率大于90%'
+
+      - alert: 微服务内存使用率告警
+        expr: sum by (id, instance, env_type, container_label_MESOS_TASK_ID) (container_memory_rss{job="cadvisor", env_type="pro", container_label_MESOS_TASK_ID!=""}) / sum by (id, instance, env_type, container_label_MESOS_TASK_ID) (container_spec_memory_limit_bytes{job="cadvisor", env_type="pro", container_label_MESOS_TASK_ID!=""}) * 100 != +Inf > 99
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $value }}'
+          description: '内存使用率大于99%'

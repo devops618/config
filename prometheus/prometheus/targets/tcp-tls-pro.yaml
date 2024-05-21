@@ -1,0 +1,6 @@
+---
+- targets:
+    - domain:443
+
+  labels:
+    env_type: pro

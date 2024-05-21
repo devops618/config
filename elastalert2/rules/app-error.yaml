@@ -1,0 +1,28 @@
+name: "app-error"
+type: any
+index: "prod-*"
+
+buffer_time:
+  minutes: 1
+
+realert:
+  minutes: 60
+
+filter:
+  - match:
+      level: "ERROR"
+  - bool:
+      should:
+        - match_phrase:
+            message: "OutOfMemoryError"
+        - match_phrase:
+            message: "UnknownHostException"
+
+alert_text: "elastalert: {} ERROR 日志异常告警"
+alert_text_args:
+  - "app"
+
+alert:
+  - "lark"
+lark_bot_id: "XXXX"
+lark_msgtype: "text"

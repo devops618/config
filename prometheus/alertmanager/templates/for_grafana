@@ -1,0 +1,23 @@
+{{ define "alert.print_alert" }}
+{{ range .Labels.SortedPairs }}{{ .Name }}: {{ .Value }}
+{{ end -}}
+{{ range $k, $v := .Values }}{{ $k }}: {{ $v }}
+{{ end -}}
+{{ if .Annotations -}}
+{{ range .Annotations.SortedPairs }}{{ .Name }}: {{ .Value }}
+{{ end -}}
+{{- end -}}
+{{- end -}}
+
+{{ define "alert.message" }}
+{{ if .Alerts.Firing }}
+**{{ len .Alerts.Firing }} firing alert(s):**
+{{ range .Alerts.Firing }}{{ template "alert.print_alert" . }}
+{{- end -}}
+{{- end -}}
+{{ if .Alerts.Resolved }}
+**{{ len .Alerts.Resolved }} resolved alert(s):**
+{{ range .Alerts.Resolved }}{{ template "alert.print_alert" .}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

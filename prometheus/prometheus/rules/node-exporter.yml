@@ -1,0 +1,74 @@
+groups:
+  - name: node-exporter
+    rules:
+      - alert: 主机宕机
+        expr: up{job="node-exporter", env_type="pro"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "主机宕机"
+
+      - alert: CPU iowait 过高
+        expr: (avg by (instance) (rate(node_cpu_seconds_total{mode="iowait"}[5m])) * 100 > 10) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "CPU iowait 大于10%"
+
+      - alert: disk IO 延时过高
+        expr: (rate(node_disk_io_time_seconds_total[1m]) > 1) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "disk IO 延时大于1s"
+
+      - alert: 主机发生 OOM kill
+        expr: (increase(node_vmstat_oom_kill[1m]) > 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "主机发生 OOM kill"
+
+      - alert: 主机网络接收错误
+        expr: (rate(node_network_receive_errs_total[2m]) / rate(node_network_receive_packets_total[2m]) > 0.01) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "主机网络接收错误"
+
+      - alert: 主机网络传输错误
+        expr: (rate(node_network_transmit_errs_total[2m]) / rate(node_network_transmit_packets_total[2m]) > 0.01) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "主机网络传输错误"
+
+      - alert: 主机连接限制异常
+        expr: (node_nf_conntrack_entries / node_nf_conntrack_entries_limit > 0.8) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "主机连接限制异常"
+
+      - alert: 主机时钟偏差异常
+        expr: ((node_timex_offset_seconds > 0.05 and deriv(node_timex_offset_seconds[5m]) >= 0) or (node_timex_offset_seconds < -0.05 and deriv(node_timex_offset_seconds[5m]) <= 0)) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }}"
+          description: "主机时钟偏差异常"

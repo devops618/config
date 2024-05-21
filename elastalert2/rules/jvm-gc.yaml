@@ -1,0 +1,30 @@
+name: "jvm-gc"
+#This rule matches when the value of a metric within the calculation window is higher or lower than a threshold.
+#By default this is buffer_time.
+type: "metric_aggregation"
+index: "prod-*"
+
+buffer_time:
+  minutes: 1
+
+realert:
+  minutes: 240
+
+metric_agg_key: gc_counts
+metric_agg_script:
+  script: doc['Young_GC_Frequency'].value + doc['Old_GC_Frequency'].value
+metric_agg_type: sum
+max_threshold: 10.0
+query_key:
+  - service_name.keyword
+  - host_port.keyword
+
+alert_text: "elastalert: {} jvm gc counts {}"
+alert_text_args:
+  - "service_name.keyword,host_port.keyword"
+  - "metric_gc_counts_sum"
+
+alert:
+  - "lark"
+lark_bot_id: "XXXX"
+lark_msgtype: "text"

@@ -1,0 +1,11 @@
+[
+  {
+    "labels": {
+      "job": "node-exporter",
+      "env_type": "pro"
+    },
+    "targets": [
+      "localhost:9100"
+    ]
+  }
+]

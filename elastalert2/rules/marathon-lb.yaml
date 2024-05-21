@@ -1,0 +1,41 @@
+name: "marathon-lb"
+#This rule matches when there are at least a certain number of events in a given time frame.
+#This may be counted on a per-query_key basis.
+type: "frequency"
+index: "prod-*"
+use_strftime_index: false
+is_enabled: true
+#The number of events which will trigger an alert, inclusive.
+num_events: 30
+#The time that num_events must occur within.
+timeframe:
+  minutes: 5
+#This option allows you to ignore repeating alerts for a period of time.
+realert:
+  minutes: 240
+
+timestamp_field: "@timestamp"
+timestamp_type: "iso"
+use_local_time: true
+
+filter:
+  - range:
+      http_status_code:
+        from: 500
+        to: 599
+
+#This option allows you to aggregate multiple matches together into one alert.
+aggregation:
+  minutes: 5
+aggregation_key: http_request
+#Setting this to true will cause aggregations to be created relative to the timestamp of the first event, rather than the current time.
+aggregate_by_match_time: true
+
+alert_text: "elastalert: {} status_code 5XX"
+alert_text_args:
+  - "http_request"
+
+alert:
+  - "lark"
+lark_bot_id: "XXXX"
+lark_msgtype: "text"
